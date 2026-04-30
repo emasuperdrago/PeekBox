@@ -32,11 +32,13 @@
     "@capacitor/status-bar": "8.0.2",
     "@ionic/angular": "^8.0.0",
     "@ionic/pwa-elements": "^3.4.0",
+    "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
     "ionicons": "^7.0.0",
     "jeep-sqlite": "^2.8.0",
     "rxjs": "~7.8.0",
     "sql.js": "1.8.0",
+    "sqlite3": "^6.0.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
