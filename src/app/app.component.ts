@@ -8,7 +8,7 @@ import { DatabaseService } from './services/database';
   styleUrls: ['app.component.scss'],
   standalone: true,
   imports: [IonApp, IonRouterOutlet],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] // Fondamentale per riconoscere <jeep-sqlite>
 })
 export class AppComponent implements AfterViewInit {
   
@@ -16,11 +16,18 @@ export class AppComponent implements AfterViewInit {
 
   // Questo scatta SOLO quando l'HTML è stato caricato al 100%
   async ngAfterViewInit() {
-    console.log('Avvio inizializzazione database...');
-    
-    // Ora il tag <jeep-sqlite> esiste fisicamente sulla pagina, possiamo accenderlo
-    await this.dbService.initPlugin();
-    
-    console.log('App pronta e Database configurato!');
+    // Usiamo un piccolo timeout per dare a Safari il tempo di "montare" il componente jeep-sqlite
+    setTimeout(async () => {
+      try {
+        console.log('--- Avvio inizializzazione database PeekBox ---');
+        
+        // Inizializziamo il plugin
+        await this.dbService.initPlugin();
+        
+        console.log('✅ App pronta e Database configurato correttamente!');
+      } catch (err) {
+        console.error('❌ Errore critico durante l\'avvio:', err);
+      }
+    }, 600); // 600ms sono il "punto dolce" per evitare l'errore getHostRef su Safari
   }
 }

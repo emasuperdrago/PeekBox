@@ -15,30 +15,25 @@ export class DatabaseService {
       const platform = Capacitor.getPlatform();
   
       if (platform === 'web') {
+        // 1. Aspettiamo che il componente sia definito
         await customElements.whenDefined('jeep-sqlite');
         
-        // Inizializziamo il WebStore
-        await this.sqlite.initWebStore();
-        console.log('✅ WebStore inizializzato');
+        // 2. Troviamo l'elemento nel DOM
+        const jeepSqliteEl = document.querySelector('jeep-sqlite');
         
-        // RITARDIAMO l'apertura: Safari ha bisogno di tempo per montare IndexedDB
-        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        if (jeepSqliteEl) {
+          // 3. Inizializziamo il WebStore SOLO SE l'elemento esiste
+          await this.sqlite.initWebStore();
+          console.log('✅ WebStore inizializzato');
+        } else {
+          console.error('❌ Elemento <jeep-sqlite> non trovato! Controlla app.component.html');
+          return; // Fermiamo l'esecuzione per evitare l'errore rosso successivo
+        }
       }
   
-      // Pulizia connessioni orfane
-      try {
-        const isConn = (await this.sqlite.isConnection(this.DB_NAME, false)).result;
-        if (isConn) { 
-          await this.sqlite.closeConnection(this.DB_NAME, false); 
-        }
-      } catch (e) { }
-  
-      // Creazione connessione
+      // Proseguiamo con la connessione
       this.db = await this.sqlite.createConnection(this.DB_NAME, false, 'no-encryption', 1, false);
-      
-      // APERTURA: Se qui dà errore, il problema è il browser in modalità privata o cache corrotta
       await this.db.open();
-      
       console.log('✅ DATABASE PEEKBOX APERTO!');
       await this.creaTabelle();
   
